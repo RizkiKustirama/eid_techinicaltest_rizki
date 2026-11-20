@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MachineType {
+  CNC
+  Milling
+  Press
+  Assembly
+}
+
+enum MachineStatus {
+  Running
+  Idle
+  Maintenance
+  Error
+}
+
+enum ShiftType {
+  Shift_1
+  Shift_2
+  Shift_3
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("supervisor")
+  createdAt DateTime @default(now())
+}
+
+model Machine {
+  id              String          @id @default(cuid())
+  code            String          @unique
+  name            String
+  type            MachineType
+  status          MachineStatus   @default(Idle)
+  temperature     Float           @default(35.0)
+  outputPerMinute Int             @default(0)
+  operatorName    String
+  updatedAt       DateTime        @updatedAt
+  createdAt       DateTime        @default(now())
+  logs            ProductionLog[]
+}
+
+model ProductionLog {
+  id           String        @id @default(cuid())
+  machineId    String
+  machine      Machine       @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  shift        ShiftType
+  outputCount  Int
+  temperature  Float
+  status       MachineStatus
+  operatorName String
+  recordedAt   DateTime      @default(now())
+
+  @@index([recordedAt, shift])
+  @@index([machineId])
+}
