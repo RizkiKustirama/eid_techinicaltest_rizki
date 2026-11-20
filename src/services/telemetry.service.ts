@@ -30,7 +30,7 @@ export class TelemetryService {
       // Simulasi fluktuasi real-time jika mesin Running
       if (machine.status === MachineStatus.Running) {
         // Fluktuasi suhu antara -0.8C hingga +1.2C
-        const tempDelta = (Math.random() * 2 - 0.8);
+        const tempDelta = (Math.random() * 2 - 1.0);
         nextTemp = parseFloat((machine.temperature + tempDelta).toFixed(1));
 
         // Batas suhu normal mesin 35C - 85C
